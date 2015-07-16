@@ -5,9 +5,6 @@ function Main() {};
 
 Main.prototype = {
   preload: function(){
-    this.game.load.image('helicopter', 'assets/helicopter.png');
-    this.game.load.image('box', 'assets/box.png');
-    this.game.stage.backgroundColor = "#f77777";
   },
   create: function(){
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -61,7 +58,7 @@ Main.prototype = {
     }, this)
   },
   restart: function(){
-    this.game.state.start('main');
+    this.game.state.start('gameOver', true, false, {previousScore: this.score});
   },
   addScore: function(){
     this.score += Math.floor((this.game.time.time - this.startTime)/100);
@@ -69,5 +66,46 @@ Main.prototype = {
   }
 };
 
+function Menu(){};
+
+Menu.prototype = {
+  preload: function(){
+    this.game.load.image('helicopter', 'assets/helicopter.png');
+    this.game.load.image('box', 'assets/box.png');
+    this.game.stage.backgroundColor = "#f77777";
+  },
+  create: function(){
+    this.game.add.text("75", "200", "Press Spacebar to start", {font: "24px Arial", fill: "#FFFFFFF"});
+    this.spacebar = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+  },
+  update: function(){
+    if(this.spacebar.isDown){
+      this.game.state.start('main');
+    }
+  }
+}
+
+function GameOver(){};
+
+GameOver.prototype = {
+  init: function(params){
+    this.previousScore = params.previousScore;
+  },
+  preload: function(){
+  },
+  create: function(){
+    this.game.add.text("120", "100", "Game Over", {font: "32px Arial", fill: "#FFFFFFF"});
+    this.game.add.text("155", "200", "Score: " + this.previousScore, {font: "24px Arial", fill: "#FFFFFFF"});
+    this.game.add.text("65", "300", "Press Spacebar to restart", {font: "24px Arial", fill: "#FFFFFFF"});
+    this.spacebar = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+  },
+  update: function(){
+    if(this.spacebar.isDown){
+      this.game.state.start('main');
+    }
+  }
+}
+game.state.add('menu', Menu);
 game.state.add('main', Main);
-game.state.start('main');
+game.state.add('gameOver', GameOver);
+game.state.start('menu');
