@@ -20,6 +20,10 @@ Main.prototype = {
     this.boxes.enableBody = true;
     this.boxes.createMultiple(20, 'box');
     this.timer = this.game.time.events.loop(1500, this.addRowOfBoxes, this);
+
+    this.score = 0;
+    this.scoreText = this.game.add.text(20, 20, "Score: 0", {font: "24px Arial", fill: "#ffffff"});
+    this.startTime = this.game.time.time;
   },
   update: function(){
     if(this.spacebar.isDown && this.player.alive){
@@ -32,6 +36,7 @@ Main.prototype = {
   },
   addRowOfBoxes: function(){
     var hole = Math.floor(Math.random() * 6);
+    this.addScore();
     for(var i=0; i < MAX_BOX_COUNT; i++){
       if(i != hole && i != hole+1 && i != hole+2){
         this.addOneBox(400, i * 60 + 10)
@@ -57,6 +62,10 @@ Main.prototype = {
   },
   restart: function(){
     this.game.state.start('main');
+  },
+  addScore: function(){
+    this.score += Math.floor((this.game.time.time - this.startTime)/100);
+    this.scoreText.text = "Score: " + this.score;
   }
 };
 
